@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gharazka <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -48,69 +48,32 @@ char	*line_split(char *s1, int side)
 
 char	*get_next_line(int fd)
 {
-	static char	*buf;
+	static char	*buf[2048];
 	char	*next;
 	char	*swap;
 	
 	if (BUFFER_SIZE <= 0)
 		return (NULL);
 	next = get_str(fd);
-	if (!next && !buf)
+	if (!next && !buf[fd])
 		return (NULL);
 	if (next)
-		buf = ft_strjoin(buf, next);
-	while (ft_strchr(next) && ft_strchr(buf))
+		buf[fd] = ft_strjoin(buf[fd], next);
+	while (ft_strchr(next) && ft_strchr(buf[fd]))
 	{
 		free(next);
 		next = get_str(fd);
-		buf = ft_strjoin(buf, next);
+		buf[fd] = ft_strjoin(buf[fd], next);
 	}
 	free(next);
-	swap = ft_strdup(buf);
-	free(buf);
-	buf = ft_strdup(line_split(swap, 0));
-	if (!buf)
-		free(buf);
+	swap = ft_strdup(buf[fd]);
+	free(buf[fd]);
+	buf[fd] = ft_strdup(line_split(swap, 0));
+	if (!buf[fd])
+		free(buf[fd]);
 	next = ft_strdup(line_split(swap, 1));
 	free(swap);
 	return (next);
 }
 
-int	main(void)
-{
-	int	fd;
-	char	*test;
 
-	fd = open("text.txt", O_RDONLY);
-	test = get_next_line(fd);
-	printf("1: %s", test);
-	free(test);
-	test = get_next_line(fd);
-	printf("2: %s", test);
-	free(test);
-	test = get_next_line(fd);
-	printf("3: %s", test);
-	free(test);
-	test = get_next_line(fd);
-	printf("4: %s", test);
-	free(test);
-	test = get_next_line(fd);
-	printf("5: %s", test);
-	free(test);
-	test = get_next_line(fd);
-	printf("6: %s", test);
-	free(test);
-	test = get_next_line(fd);
-	printf("7: %s", test);
-	free(test);
-	test = get_next_line(fd);
-	printf("8: %s", test);
-	free(test);
-	test = get_next_line(fd);
-	printf("9: %s", test);
-	free(test);
-	test = get_next_line(fd);
-	printf("10: %s", test);
-	free(test);
-	printf("%s", get_next_line(fd));
-}
